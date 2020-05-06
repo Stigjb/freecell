@@ -1,0 +1,36 @@
+[package]
+name = "freecell"
+version = "0.2.0"
+authors = ["Stig Johan Berggren <stigjb@gmail.com>"]
+edition = "2018"
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[dependencies]
+log = "0.4"
+wasm-bindgen = "0.2.58"
+wasm-logger = "0.2"
+wee_alloc = { version = "0.4.4", optional = true }
+yew = "0.15"
+wasm-bindgen-futures = "0.4.12"
+serde_json = "1.0.52"
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+
+[dependencies.web-sys]
+version = "0.3.4"
+features = [
+  "Blob",
+  "CanvasRenderingContext2d",
+  "HtmlCanvasElement",
+  "HtmlImageElement",
+  "ImageBitmap",
+  "KeyboardEvent",
+  "Request",
+  "RequestInit",
+  "RequestMode",
+  "Response",
+  "Window",
+]
