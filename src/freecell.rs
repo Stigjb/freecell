@@ -3,12 +3,14 @@ use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::{spawn_local, JsFuture};
 use web_sys::{
-    Blob, CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement, ImageBitmap, Request,
-    RequestInit, RequestMode, Response,
+    CanvasRenderingContext2d, HtmlCanvasElement, HtmlImageElement, Request, RequestInit,
+    RequestMode, Response,
 };
 use yew::prelude::*;
 
 use crate::fetch::{FetchError, FetchState};
+use crate::playing_card;
+use crate::texture_atlas::{Location, TextureAtlas};
 
 pub struct Freecell {
     link: ComponentLink<Self>,
@@ -16,11 +18,12 @@ pub struct Freecell {
     canvas: Option<HtmlCanvasElement>,
     ctx: Option<CanvasRenderingContext2d>,
     spritesheet: HtmlImageElement,
-    sprite_info: FetchState<()>,
+    texture_atlas: FetchState<TextureAtlas>,
 }
 
 pub enum Msg {
     Failed(JsValue),
+    SetFetchState(FetchState<TextureAtlas>),
     Redraw,
     SpritesLoaded,
 }
@@ -37,7 +40,7 @@ impl Component for Freecell {
             canvas: None,
             ctx: None,
             spritesheet,
-            sprite_info: FetchState::default(),
+            texture_atlas: FetchState::default(),
         }
     }
 
@@ -53,6 +56,7 @@ impl Component for Freecell {
             }
             Msg::Failed(_) => error!("Something failed, oh noes"),
             Msg::Redraw => self.render().unwrap(),
+            Msg::SetFetchState(texture_atlas) => self.texture_atlas = texture_atlas,
         }
         true
     }
@@ -86,6 +90,18 @@ impl Component for Freecell {
         onload.forget();
 
         // Load sprite info
+        let link = self.link.clone();
+        let future = async move {
+            match fetch_texture_atlas().await {
+                Ok(sys_info) => {
+                    link.send_message(Msg::SetFetchState(FetchState::Success(sys_info)))
+                }
+                Err(err) => link.send_message(Msg::SetFetchState(FetchState::Failed(err))),
+            }
+        };
+        spawn_local(future);
+        self.link
+            .send_message(Msg::SetFetchState(FetchState::Fetching));
     }
 
     fn view(&self) -> Html {
@@ -116,16 +132,26 @@ impl Freecell {
         }
         ctx.stroke();
 
-        for c in 0..52 {
-            let row = c / 8;
-            let col = c % 8;
+        let mut deck = playing_card::Deck::new();
+        deck.shuffle();
+        for (i, card) in deck.0.iter().enumerate() {
+            let row = i / 8;
+            let col = i % 8;
 
             let x = 15. + 100. * col as f64;
             let y = 130. + 30. * row as f64;
+
+            let loc = match &self.texture_atlas {
+                FetchState::Success(atlas) => atlas.locations.get(&card.id()).unwrap(),
+                _ => {
+                    info!("texture atlas not ready");
+                    &Location { x: 0, y: 570 }
+                }
+            };
             ctx.draw_image_with_html_image_element_and_sw_and_sh_and_dx_and_dy_and_dw_and_dh(
                 &self.spritesheet,
-                0.,
-                570.,
+                loc.x as f64,
+                loc.y as f64,
                 140.,
                 190.,
                 x,
@@ -138,12 +164,12 @@ impl Freecell {
     }
 }
 
-async fn fetch_sprites() -> Result<Blob, JsValue> {
+async fn fetch_texture_atlas() -> Result<TextureAtlas, FetchError> {
     let mut opts = RequestInit::new();
     opts.method("GET");
     opts.mode(RequestMode::Cors);
 
-    let url = "playingCards.xml";
+    let url = "textureAtlas.json";
     let request: Request = Request::new_with_str_and_init(&url, &opts)?;
 
     let window = web_sys::window().unwrap();
@@ -152,7 +178,10 @@ async fn fetch_sprites() -> Result<Blob, JsValue> {
     assert!(resp_value.is_instance_of::<Response>());
     let resp: Response = resp_value.dyn_into().unwrap();
 
-    let blob: JsValue = JsFuture::from(resp.blob()?).await?;
+    let json: JsValue = JsFuture::from(resp.json()?).await?;
+    let atlas: TextureAtlas = json.into_serde()?;
 
-    Ok(blob.into())
+    info!("Loaded texture atlas");
+
+    Ok(atlas)
 }

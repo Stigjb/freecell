@@ -3,6 +3,8 @@
 mod app;
 mod fetch;
 mod freecell;
+mod playing_card;
+mod texture_atlas;
 
 use wasm_bindgen::prelude::*;
 
