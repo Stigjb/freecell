@@ -6,8 +6,8 @@ use rand::{
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct PlayingCard {
-    suit: Suit,
-    rank: Rank,
+    pub suit: Suit,
+    pub rank: Rank,
 }
 
 #[derive(Debug, Clone, PartialEq)]

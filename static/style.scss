@@ -11,7 +11,33 @@ canvas {
 }
 
 .game-container {
+  background: darkgrey;
   border: 1px red solid;
   max-width: 800px;
   max-height: 600px;
+}
+
+.cells {
+  background: darkblue;
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  width: 40%;
+  justify-content: space-between;
+}
+
+.foundations {
+  background: darkgreen;
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  width: 40%;
+  justify-content: space-between;
+}
+
+.no-card {
+  width: 70px;
+  height: 95px;
+  background: yellow;
+  border: 1px red solid;
 }
