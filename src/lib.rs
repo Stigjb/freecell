@@ -1,8 +1,8 @@
 #![recursion_limit = "512"]
 
 mod app;
+mod comp;
 mod fetch;
-mod freecell;
 mod playing_card;
 mod texture_atlas;
 

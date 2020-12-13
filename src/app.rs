@@ -1,4 +1,4 @@
-use crate::freecell::Freecell;
+use crate::comp::divcell::Divcell;
 use log::*;
 use yew::prelude::*;
 
@@ -26,16 +26,14 @@ impl Component for App {
         info!("view()");
         html! {
             <div class="container">
-                <section class="todoapp">
+                <main>
                     <header class="header">
                         <h1>{ "Freecell" }</h1>
                     </header>
                     <section class="main">
-                        <Freecell />
+                        <Divcell />
                     </section>
-                    <footer class="footer">
-                    </footer>
-                </section>
+                </main>
                 <footer class="info">
                     <p>{ "Written by " }<a href="https://github.com/stigjb/" target="_blank">{ "Stig Johan Berggren" }</a></p>
                     <p>{ "Card graphics by " }<a href="https://kenney.nl/assets/boardgame-pack" target="_blank">{ "kenney.nl" }</a></p>
