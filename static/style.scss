@@ -26,7 +26,7 @@ body {
 }
 
 .card:hover {
-  border: 3px solid orange;
+  background-image: linear-gradient(orange, blue);
 }
 
 @each $idx in (0, 1, 2, 3, 4, 5) {
@@ -37,6 +37,6 @@ body {
 
 @each $idx in (0, 1, 2, 3, 4, 5, 6, 7, 8, 9) {
   .row-#{$idx} {
-    background-position-x: $idx * -$card-height;
+    background-position-y: $idx * -$card-height;
   }
 }

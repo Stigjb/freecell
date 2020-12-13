@@ -1,16 +1,8 @@
 use log::*;
-use wasm_bindgen::prelude::*;
-use wasm_bindgen::JsCast;
-use wasm_bindgen_futures::{spawn_local, JsFuture};
-use web_sys::{
-    CanvasRenderingContext2d, HtmlCanvasElement, Request, RequestInit,
-    RequestMode, Response,
-};
-use yew::{html, ComponentLink, Component, ShouldRender, Html};
+use yew::prelude::*;
 
-use crate::fetch::{FetchError, FetchState};
 use crate::playing_card;
-use crate::texture_atlas::{Location, TextureAtlas};
+use super::card::Card;
 
 pub struct Divcell {
     link: ComponentLink<Self>,
@@ -35,62 +27,31 @@ impl Component for Divcell {
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
-            Msg::Redraw => self.render().unwrap(),
-        }
         true
     }
 
     fn view(&self) -> Html {
         info!("view()");
         let onclick = self.link.callback(|_| Msg::Redraw);
+        let mut deck = playing_card::Deck::new();
+        deck.shuffle();
+        let children = deck.0.iter().enumerate().map(|(i, card)| {
+            let col = i / 8;
+            let row = i % 8;
+
+            let x = 15. + 100. * col as f32;
+            let y = 130. + 30. * row as f32;
+            info!("{} {} {} {} ", col, row, x, y);
+
+            html! { <Card pos=(x, y) card=card /> }
+        });
         html! {
             <>
             <div class="game-container">
-                <div class="card" style="position: absolute; top: 10px; left: 10px;"></div>
-                <div class="card" style="position: absolute; top: 100px; left: 100px;"></div>
+                { for children }
             </div>
             <button onclick=onclick>{ "Redraw" }</button>
             </>
         }
     }
-}
-
-impl Divcell {
-    fn render(&self) -> Result<(), JsValue> {
-        let place_pos = vec![15., 95., 175., 255., 475., 555., 635., 715.];
-
-        let mut deck = playing_card::Deck::new();
-        deck.shuffle();
-        for (i, card) in deck.0.iter().enumerate() {
-            let row = i / 8;
-            let col = i % 8;
-
-            let x = 15. + 100. * col as f64;
-            let y = 130. + 30. * row as f64;
-        }
-        Ok(())
-    }
-}
-
-async fn fetch_texture_atlas() -> Result<TextureAtlas, FetchError> {
-    let mut opts = RequestInit::new();
-    opts.method("GET");
-    opts.mode(RequestMode::Cors);
-
-    let url = "textureAtlas.json";
-    let request: Request = Request::new_with_str_and_init(&url, &opts)?;
-
-    let window = web_sys::window().unwrap();
-    let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
-
-    assert!(resp_value.is_instance_of::<Response>());
-    let resp: Response = resp_value.dyn_into().unwrap();
-
-    let json: JsValue = JsFuture::from(resp.json()?).await?;
-    let atlas: TextureAtlas = json.into_serde()?;
-
-    info!("Loaded texture atlas");
-
-    Ok(atlas)
 }

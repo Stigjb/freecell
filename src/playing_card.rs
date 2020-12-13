@@ -6,8 +6,8 @@ use rand::{
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct PlayingCard {
-    suit: Suit,
-    rank: Rank,
+    pub suit: Suit,
+    pub rank: Rank,
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -42,6 +42,9 @@ pub fn random_card() -> PlayingCard {
 }
 
 impl PlayingCard {
+    pub fn new(rank: Rank, suit: Suit) -> Self {
+        Self { rank, suit }
+    }
     pub fn id(&self) -> String {
         let suit = match self.suit {
             Suit::Spades => "Spades",
