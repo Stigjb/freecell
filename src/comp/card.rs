@@ -1,5 +1,4 @@
 use yew::prelude::*;
-use std::collections::HashMap;
 use crate::playing_card::{PlayingCard, Suit, Rank};
 
 fn position_of_card(card: &PlayingCard) -> (u8, u8) {
@@ -60,43 +59,10 @@ fn position_of_card(card: &PlayingCard) -> (u8, u8) {
     }
 }
 
-pub struct Card {
-    props: Props,
-    link: ComponentLink<Self>,
-}
-
-#[derive(Clone, Properties, PartialEq)]
-pub struct Props {
-    pub pos: (f32, f32),
-    pub card: PlayingCard,
-}
-
-impl Component for Card {
-    type Message = ();
-    type Properties = Props;
-
-    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self { props, link }
-    }
-
-    fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        if props == self.props {
-            return false;
-        }
-        true
-    }
-
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        false
-    }
-
-    fn view(&self) -> Html {
-        let (col, row) = position_of_card(&self.props.card);
-        let class = format!("card row-{} col-{}", row, col);
-        let (x, y) = self.props.pos;
-        let style = format!("position: absolute; left: {}px; top: {}px;", x, y);
-        html! {
-            <div class=class style=style></div>
-        }
+pub fn card_comp(card: &PlayingCard) -> Html {
+    let (col, row) = position_of_card(card);
+    let class = format!("card row-{} col-{}", row, col);
+    html! {
+        <div class=class></div>
     }
 }

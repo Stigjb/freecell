@@ -1,11 +1,13 @@
 use log::*;
 use yew::prelude::*;
 
-use crate::playing_card;
-use super::card::Card;
+use crate::playing_card::{Deck, PlayingCard};
+use super::card::card_comp;
+use super::cascade::Cascade;
 
 pub struct Divcell {
     link: ComponentLink<Self>,
+    cascades: [Vec<PlayingCard>; 8],
 }
 
 pub enum Msg {
@@ -17,8 +19,21 @@ impl Component for Divcell {
     type Properties = ();
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+        let mut deck = Deck::new();
+        deck.shuffle();
+        let cascades: [Vec<PlayingCard>; 8] = [
+            deck.0[0..7].iter().cloned().collect::<Vec<_>>(),
+            deck.0[7..14].iter().cloned().collect::<Vec<_>>(),
+            deck.0[14..21].iter().cloned().collect::<Vec<_>>(),
+            deck.0[21..28].iter().cloned().collect::<Vec<_>>(),
+            deck.0[28..34].iter().cloned().collect::<Vec<_>>(),
+            deck.0[34..40].iter().cloned().collect::<Vec<_>>(),
+            deck.0[40..46].iter().cloned().collect::<Vec<_>>(),
+            deck.0[46..52].iter().cloned().collect::<Vec<_>>(),
+        ];
         Self {
             link,
+            cascades,
         }
     }
 
@@ -33,22 +48,16 @@ impl Component for Divcell {
     fn view(&self) -> Html {
         info!("view()");
         let onclick = self.link.callback(|_| Msg::Redraw);
-        let mut deck = playing_card::Deck::new();
-        deck.shuffle();
-        let children = deck.0.iter().enumerate().map(|(i, card)| {
-            let col = i / 8;
-            let row = i % 8;
-
-            let x = 15. + 100. * col as f32;
-            let y = 130. + 30. * row as f32;
-            info!("{} {} {} {} ", col, row, x, y);
-
-            html! { <Card pos=(x, y) card=card /> }
+        let children = self.cascades.iter().map(|cards| {
+            html!{ <Cascade cards=cards.clone() /> }
         });
+        info!("{:?}", children);
         html! {
             <>
             <div class="game-container">
-                { for children }
+                <div class="tableau">
+                    { for children }
+                </div>
             </div>
             <button onclick=onclick>{ "Redraw" }</button>
             </>

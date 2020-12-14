@@ -17,16 +17,42 @@ body {
   height: 600px;
 }
 
+
 .card {
   background-image: url("/playingCards.png");
-  width: $card-width;
-  height: $card-height;
+  width: 140px;
+  min-height: 52px;
+  max-height: 190px;
+  transform-origin: top left;
+  flex-basis: 190px;
+  flex-shrink: 1;
+}
+
+.tableau {
+  background: blue;
+  display: flex;
+  flex-direction: row;
+  height: 400px;
+  width: 100%;
   transform-origin: top left;
   scale: 60%;
 }
 
+.cascade {
+  display: flex;
+  flex-direction: column;
+  background: teal;
+  padding-bottom: 50px;
+  margin-bottom: -50px;
+}
+
+.cascade .card:last-child {
+  flex-shrink: 0;
+}
+            
 .card:hover {
-  background-image: linear-gradient(orange, blue);
+  background-image: 
+    linear-gradient(#bada55a0, #c0ffeea0), url("/playingCards.png");
 }
 
 @each $idx in (0, 1, 2, 3, 4, 5) {
