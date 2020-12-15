@@ -1,7 +1,7 @@
-use log::*;
-use yew::prelude::*;
 use super::card::card_comp;
 use crate::playing_card::PlayingCard;
+use log::*;
+use yew::prelude::*;
 
 pub struct Cascade {
     pub props: Props,

@@ -6,9 +6,6 @@ mod fetch;
 mod playing_card;
 mod texture_atlas;
 
-#[macro_use]
-extern crate lazy_static;
-
 use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global

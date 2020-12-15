@@ -30,9 +30,7 @@ impl Component for App {
                     <header class="header">
                         <h1>{ "Freecell" }</h1>
                     </header>
-                    <section class="main">
-                        <Divcell />
-                    </section>
+                    <Divcell />
                 </main>
                 <footer class="info">
                     <p>{ "Written by " }<a href="https://github.com/stigjb/" target="_blank">{ "Stig Johan Berggren" }</a></p>

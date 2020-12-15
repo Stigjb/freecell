@@ -1,9 +1,10 @@
 use log::*;
 use yew::prelude::*;
 
-use crate::playing_card::{Deck, PlayingCard};
-use super::card::card_comp;
+use super::cells::cells_comp;
+use super::foundations::foundations_comp;
 use super::cascade::Cascade;
+use crate::playing_card::{Deck, PlayingCard};
 
 pub struct Divcell {
     link: ComponentLink<Self>,
@@ -31,10 +32,7 @@ impl Component for Divcell {
             deck.0[40..46].iter().cloned().collect::<Vec<_>>(),
             deck.0[46..52].iter().cloned().collect::<Vec<_>>(),
         ];
-        Self {
-            link,
-            cascades,
-        }
+        Self { link, cascades }
     }
 
     fn change(&mut self, _props: Self::Properties) -> ShouldRender {
@@ -49,12 +47,16 @@ impl Component for Divcell {
         info!("view()");
         let onclick = self.link.callback(|_| Msg::Redraw);
         let children = self.cascades.iter().map(|cards| {
-            html!{ <Cascade cards=cards.clone() /> }
+            html! { <Cascade cards=cards.clone() /> }
         });
         info!("{:?}", children);
         html! {
             <>
             <div class="game-container">
+                <div class="top">
+                    { cells_comp() }
+                    { foundations_comp() }
+                </div>
                 <div class="tableau">
                     { for children }
                 </div>

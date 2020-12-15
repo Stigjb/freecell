@@ -4,6 +4,8 @@ $card-height: 190px;
 
 body {
   background: $background;
+  font-size: 18px;
+  font-family: 'Fira Sans', sans-serif;
 }
 
 *, *::before, *::after {
@@ -13,40 +15,41 @@ body {
 .game-container {
   background: darkgreen;
   position: relative;
-  width: 800px;
-  height: 600px;
+  width: 1024;
+  height: 768;
+  scale: 60%;
+  transform-origin: top left;
 }
-
 
 .card {
   background-image: url("/playingCards.png");
   width: 140px;
-  min-height: 52px;
   max-height: 190px;
-  transform-origin: top left;
-  flex-basis: 190px;
-  flex-shrink: 1;
 }
 
 .tableau {
   background: blue;
   display: flex;
   flex-direction: row;
-  height: 400px;
+  height: 600px;
   width: 100%;
   transform-origin: top left;
-  scale: 60%;
 }
 
 .cascade {
   display: flex;
   flex-direction: column;
   background: teal;
-  padding-bottom: 50px;
-  margin-bottom: -50px;
+  height: 100%;
+}
+
+.cascade .card {
+  flex-shrink: 1;
+  flex-basis: 52px;
 }
 
 .cascade .card:last-child {
+  flex-basis: 190px;
   flex-shrink: 0;
 }
             
@@ -65,4 +68,23 @@ body {
   .row-#{$idx} {
     background-position-y: $idx * -$card-height;
   }
+}
+
+.top {
+  display: flex;
+  flex-direction: row;
+}
+
+.foundations,
+.cells {
+  display: flex;
+  flex-direction: row;
+}
+
+.foundation,
+.cell {
+  width: 140px;
+  height: 190px;
+  border: 5px solid darkred;
+  border-radius: 10px;
 }
