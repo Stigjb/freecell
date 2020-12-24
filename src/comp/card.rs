@@ -219,6 +219,8 @@ pub fn card_comp(card: &PlayingCard) -> Html {
     let (col, row) = position_of_card(card);
     let class = format!("card row-{} col-{}", row, col);
     html! {
-        <div class=class draggable="true"></div>
+        <div class="card-wrapper">
+            <div class=class draggable="true" />
+        </div>
     }
 }
