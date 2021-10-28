@@ -1,6 +1,5 @@
-use super::card::card_comp;
+use super::card::Card;
 use crate::playing_card::PlayingCard;
-use log::*;
 use yew::prelude::*;
 
 pub struct Cascade {
@@ -10,6 +9,7 @@ pub struct Cascade {
 #[derive(Properties, Clone, Debug)]
 pub struct Props {
     pub cards: Vec<PlayingCard>,
+    pub mark_card: Callback<PlayingCard>,
 }
 
 impl Component for Cascade {
@@ -20,7 +20,7 @@ impl Component for Cascade {
         Self { props }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
         false
     }
 
@@ -30,10 +30,14 @@ impl Component for Cascade {
     }
 
     fn view(&self) -> Html {
-        info!("{:?}", self.props);
+        let children = self
+            .props
+            .cards
+            .iter()
+            .map(|c| html! { <Card card=c onclick=self.props.mark_card.clone() /> });
         html! {
             <div class="cascade">
-                { for self.props.cards.iter().map(card_comp) }
+                { for children }
             </div>
         }
     }

@@ -1,13 +1,24 @@
+use std::fmt::Display;
+
 use rand::{
     distributions::{Distribution, Standard},
     seq::SliceRandom,
     Rng,
 };
+use yew::html::ImplicitClone;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct PlayingCard {
     pub suit: Suit,
     pub rank: Rank,
+}
+
+impl ImplicitClone for PlayingCard {}
+
+impl Display for PlayingCard {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:?} of {:?}", self.rank, self.suit)
+    }
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -35,16 +46,7 @@ pub enum Suit {
     Diamonds,
 }
 
-pub fn random_card() -> PlayingCard {
-    let suit: Suit = rand::random();
-    let rank: Rank = rand::random();
-    PlayingCard { suit, rank }
-}
-
 impl PlayingCard {
-    pub fn new(rank: Rank, suit: Suit) -> Self {
-        Self { rank, suit }
-    }
     pub fn id(&self) -> String {
         let suit = match self.suit {
             Suit::Spades => "Spades",

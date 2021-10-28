@@ -1,4 +1,5 @@
 use crate::playing_card::{PlayingCard, Rank, Suit};
+use log::info;
 use yew::prelude::*;
 
 fn position_of_card(card: &PlayingCard) -> (u8, u8) {
@@ -211,16 +212,53 @@ fn position_of_card(card: &PlayingCard) -> (u8, u8) {
             suit: Suit::Clubs,
             rank: Rank::Two,
         } => (5, 2),
+        #[allow(unreachable_patterns)]
         _ => (1, 3), // Joker
     }
 }
 
-pub fn card_comp(card: &PlayingCard) -> Html {
-    let (col, row) = position_of_card(card);
-    let class = format!("card row-{} col-{}", row, col);
-    html! {
-        <div class="card-wrapper">
-            <div class=class draggable="true" />
-        </div>
+#[derive(Clone)]
+pub struct Card {
+    link: ComponentLink<Self>,
+    props: Props,
+}
+
+#[derive(Clone, PartialEq, Properties)]
+pub struct Props {
+    pub card: PlayingCard,
+    pub onclick: Callback<PlayingCard>,
+}
+
+pub enum Msg {
+    Clicked,
+}
+
+impl Component for Card {
+    type Message = Msg;
+    type Properties = Props;
+
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        Self { props, link }
+    }
+
+    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+        info!("Clicked {}", self.props.card);
+        self.props.onclick.emit(self.props.card.clone());
+        false
+    }
+
+    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
+        false
+    }
+
+    fn view(&self) -> Html {
+        let (col, row) = position_of_card(&self.props.card);
+        let class = format!("card row-{} col-{}", row, col);
+        let onclick = self.link.callback(|_| Msg::Clicked);
+        html! {
+            <div class="card-wrapper">
+                <div class=class draggable="true" onclick=onclick />
+            </div>
+        }
     }
 }

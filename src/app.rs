@@ -10,7 +10,7 @@ impl Component for App {
     type Message = Msg;
     type Properties = ();
 
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
+    fn create(_: Self::Properties, _link: ComponentLink<Self>) -> Self {
         Self {}
     }
 
@@ -18,7 +18,7 @@ impl Component for App {
         false
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
+    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
         true
     }
 

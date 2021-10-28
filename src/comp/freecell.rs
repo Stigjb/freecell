@@ -22,7 +22,6 @@ pub struct Freecell {
 }
 
 pub enum Msg {
-    Failed(JsValue),
     SetFetchState(FetchState<TextureAtlas>),
     Redraw,
     SpritesLoaded,
@@ -54,7 +53,6 @@ impl Component for Freecell {
                 info!("SpritesLoaded message received");
                 self.render().unwrap();
             }
-            Msg::Failed(_) => error!("Something failed, oh noes"),
             Msg::Redraw => self.render().unwrap(),
             Msg::SetFetchState(texture_atlas) => self.texture_atlas = texture_atlas,
         }
@@ -108,14 +106,14 @@ impl Component for Freecell {
         info!("view()");
         let onclick = self.link.callback(|_| Msg::Redraw);
         html! {
-            <>
+            <div>
             <div class="game-container">
-                <canvas width="800", height="600" ref=self.node_ref.clone()>
+                <canvas width="800" height="600" ref=self.node_ref.clone()>
                     { "Canvas not supported" }
                 </canvas>
             </div>
             <button onclick=onclick>{ "Redraw" }</button>
-            </>
+            </div>
         }
     }
 }
@@ -170,7 +168,7 @@ async fn fetch_texture_atlas() -> Result<TextureAtlas, FetchError> {
     opts.mode(RequestMode::Cors);
 
     let url = "textureAtlas.json";
-    let request: Request = Request::new_with_str_and_init(&url, &opts)?;
+    let request: Request = Request::new_with_str_and_init(url, &opts)?;
 
     let window = web_sys::window().unwrap();
     let resp_value = JsFuture::from(window.fetch_with_request(&request)).await?;
